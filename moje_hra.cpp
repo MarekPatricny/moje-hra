@@ -1,13 +1,99 @@
 #include <iostream>
 using namespace std;
+// ----------------------- FUNKCE ------------------------
+void soubojJednoho(int &zivot, int maxzivot, int &mana, int maxmana, int utok, int &penize, int nepritelZivot, int nepritelUtok) {
+    while (zivot > 0 && nepritelZivot > 0) {
+        int akce;
+        cout << "\nZivoty: " << zivot << "/" << maxzivot << ", Mana: " << mana << "/" << maxmana << endl;
+        cout << "Nepritel ma " << nepritelZivot << " zivotu.\n";
+        cout << "Zvol akci: 1 - Utok, 2 - Leceni (stoji 3 many, +3 zivoty): ";
+        cin >> akce;
 
+        if (akce == 1) {
+            cout << "Zautocil jsi za " << utok << " utoku!" << endl;
+            nepritelZivot -= utok;
+        } else if (akce == 2 && mana >= 3) {
+            mana -= 3;
+            zivot += 3;
+            if (zivot > maxzivot) zivot = maxzivot;
+            cout << "Vylecil jsi se na " << zivot << "/" << maxzivot << "!" << endl;
+        } else {
+            cout << "Spatna volba nebo malo many!" << endl;
+        }
+
+        if (nepritelZivot > 0) {
+            zivot -= nepritelUtok;
+            cout << "Nepritel zautocil za " << nepritelUtok << "!" << endl;
+        }
+
+        if (zivot <= 0) {
+            cout << "Byl jsi porazen!" << endl;
+            return;
+        }
+    }
+
+    cout << "Porazil jsi nepratele!" << endl;
+    penize += 10;
+}
+
+void soubojDvou(int &zivot, int maxzivot, int &mana, int maxmana, int utok, int &penize) {
+    int nepritel1 = 6, nepritel2 = 6, nepritelUtok = 3;
+
+    while (zivot > 0 && (nepritel1 > 0 || nepritel2 > 0)) {
+        int cil, akce;
+        cout << "\nZivoty: " << zivot << "/" << maxzivot << ", Mana: " << mana << "/" << maxmana << endl;
+        cout << "Nepritel 1: " << nepritel1 << " HP, Nepritel 2: " << nepritel2 << " HP\n";
+        cout << "Zvol akci: 1 - Utok, 2 - Leceni (3 many): ";
+        cin >> akce;
+
+        if (akce == 1) {
+            cout << "Na ktereho nepritele zautocis? (1 nebo 2): ";
+            cin >> cil;
+            if (cil == 1 && nepritel1 > 0) {
+                nepritel1 -= utok;
+                cout << "Zasahl jsi nepratele 1 za " << utok << "!" << endl;
+            } else if (cil == 2 && nepritel2 > 0) {
+                nepritel2 -= utok;
+                cout << "Zasahl jsi nepratele 2 za " << utok << "!" << endl;
+            } else {
+                cout << "Netrefil ses!" << endl;
+            }
+        } else if (akce == 2 && mana >= 3) {
+            mana -= 3;
+            zivot += 3;
+            if (zivot > maxzivot) zivot = maxzivot;
+            cout << "Vylecil jsi se na " << zivot << "/" << maxzivot << "!" << endl;
+        } else {
+            cout << "Spatna volba nebo malo many!" << endl;
+        }
+
+        // Nepratele utoci
+        if (nepritel1 > 0) {
+            zivot -= nepritelUtok;
+            cout << "Nepritel 1 zautocil za " << nepritelUtok << "!" << endl;
+        }
+        if (nepritel2 > 0) {
+            zivot -= nepritelUtok;
+            cout << "Nepritel 2 zautocil za " << nepritelUtok << "!" << endl;
+        }
+
+        if (zivot <= 0) {
+            cout << "Byl jsi porazen!" << endl;
+            return;
+        }
+    }
+
+    cout << "Zvitezil jsi nad obema neprateli!" << endl;
+    penize += 25;
+}
+//---------------HLAVNI CAST-----------
 int main(){
 //------------POSTAVA----------
 cout << "Vitejte v textove hre!" << endl;
 int clas, menu, rozhodnuti;
 int postavaVybrana = 0;
 
-// Statistiky hráče
+// Statistiky hrace
     int zivot = 0;
     int maxzivot = 0;
     int mana = 0;
@@ -23,100 +109,96 @@ cout << "Warlock (4)\n";
 cin >> menu;
 
 switch (menu){
-    case 1:
+   case 1: // Paladin
     cout << "Vyborne! Jste Paladin, statistiky: " << endl;
-    cout << "Zivot - 7/10" << endl;
-    cout << "Utok - 3" << endl;
-    cout << "Mana  - 8/10" << endl;
-    cout << "Vzdalenost utoku - 3" << endl;
-    cout << "Schopnosti:" << endl;
-    cout << "Uder za 3 poskozeni" << endl;
-    cout << "Uder svetlem - 1 poskozeni vsem nepratelum (stoji 3 many)" << endl;
-    cout << "Oziveni - hrac si prida 1 zivot (nesmi prekrocit max. zivot)(stoji 2 many)" << endl;
-    zivot = 7;
-    maxzivot = 10;
-    mana = 8;
-    maxmana = 10;
-    utok = 3;
+    maxzivot = 14; zivot = 14;
+    utok = 4;
+    maxmana = 10; mana = 10;
+    cout << "Zivot - " << zivot << "/" << maxzivot << endl;
+    cout << "Utok - " << utok << endl;
+    cout << "Mana  - " << mana << "/" << maxmana << endl;
+    cout << "Vzdalenost utoku - 2" << endl;
+    cout << "Schopnosti:\n";
+    cout << "- Silovy uder (4 utok)\n";
+    cout << "- Leceni (+3 zivoty, stoji 3 many)\n";
+    cout << "- Svetelna salva (2 utok vsem, stoji 5 many)\n";
     cout << "Chcete doopravdy vybrat tuto postavu (ano - 10, ne - 11): ";
     cin >> rozhodnuti;
     if (rozhodnuti == 10){
         cout << "Dobre, pokracujes dal.";
         postavaVybrana = 1;
 
-
-
     }else if (rozhodnuti == 11){
         cout << "Jdes zpet do menu.";
     }
     break;
 
-    case 2:
+    case 2: // Mag
     cout << "Skvele! Jste Mag, statistiky: " << endl;
-    cout << "Zivot - 6/10" << endl;
-    cout << "Utok - 2" << endl;
-    cout << "Mana  - 7/10" << endl;
+    maxzivot = 10; zivot = 10;
+    utok = 3;
+    maxmana = 14; mana = 14;
+    cout << "Zivot - " << zivot << "/" << maxzivot << endl;
+    cout << "Utok - " << utok << endl;
+    cout << "Mana  - " << mana << "/" << maxmana << endl;
     cout << "Vzdalenost utoku - 4" << endl;
-    zivot = 6;
-    maxzivot = 10;
-    mana = 7;
-    maxmana = 10;
-    utok = 2;
+    cout << "Schopnosti:\n";
+    cout << "- Magicky projektil (3 utok)\n";
+    cout << "- Ohniva koule (5 utok, stoji 6 many)\n";
+    cout << "- Teleport (unik z boje, stoji 4 many)\n";
     cout << "Chcete doopravdy vybrat tuto postavu (ano - 10, ne - 11): ";
     cin >> rozhodnuti;
     if (rozhodnuti == 10){
         cout << "Dobre, pokracujes dal.";
         postavaVybrana = 1;
 
-
-
     }else if (rozhodnuti == 11){
         cout << "Jdes zpet do menu.";
     }
     break;
 
-    case 3:
+    case 3: // Lovec
     cout << "Vytecne! Jste Lovec, statistiky: " << endl;
-    cout << "Zivot - 8/10" << endl;
-    cout << "Utok - 5" << endl;
-    cout << "Mana  - 5/10" << endl;
-    cout << "Vzdalenost utoku - 5" << endl;
-    zivot = 8;
-    maxzivot = 10;
-    mana = 5;
-    maxmana = 10;
+    maxzivot = 12; zivot = 12;
     utok = 5;
+    maxmana = 8; mana = 8;
+    cout << "Zivot - " << zivot << "/" << maxzivot << endl;
+    cout << "Utok - " << utok << endl;
+    cout << "Mana  - " << mana << "/" << maxmana << endl;
+    cout << "Vzdalenost utoku - 5" << endl;
+    cout << "Schopnosti:\n";
+    cout << "- Presna strela (5 utok)\n";
+    cout << "- Past na nepratele (zamezi utok nepratele, stoji 4 many)\n";
+    cout << "- Lovci instinkt (+2 utok na 2 kola, stoji 3 many)\n";
     cout << "Chcete doopravdy vybrat tuto postavu (ano - 10, ne - 11): ";
     cin >> rozhodnuti;
     if (rozhodnuti == 10){
         cout << "Dobre, pokracujes dal.";
         postavaVybrana = 1;
-
-
 
     }else if (rozhodnuti == 11){
         cout << "Jdes zpet do menu.";
     }
     break;
 
-    case 4:
+    case 4: // Warlock
     cout << "Vynikajici! Jste Warlock, statistiky: " << endl;
-    cout << "Zivot - 10/10" << endl;
-    cout << "Utok - 7" << endl;
-    cout << "Mana  - 5/10" << endl;
+    maxzivot = 16; zivot = 16;
+    utok = 6;
+    maxmana = 6; mana = 6;
+    cout << "Zivot - " << zivot << "/" << maxzivot << endl;
+    cout << "Utok - " << utok << endl;
+    cout << "Mana  - " << mana << "/" << maxmana << endl;
     cout << "Vzdalenost utoku - 1" << endl;
-    zivot = 10;
-    maxzivot = 10;
-    mana = 5;
-    maxmana = 10;
-    utok = 7;
+    cout << "Schopnosti:\n";
+    cout << "- Temny zasah (6 utok)\n";
+    cout << "- Kradez zivota (+2 zivoty, stoji 3 many)\n";
+    cout << "- Vyvolani stinu (2 utok navic na 1 kolo, stoji 4 many)\n";
     cout << "Chcete doopravdy vybrat tuto postavu (ano - 10, ne - 11): ";
     cin >> rozhodnuti;
     if (rozhodnuti == 10){
         cout << "Dobre, pokracujes dal.";
         postavaVybrana = 1;
-
-
 
     }else if (rozhodnuti == 11){
         cout << "Jdes zpet do menu.";
@@ -129,11 +211,14 @@ switch (menu){
 
 
 
+
+
+
 }
 
 
 //------------VESNICE--------------
-
+vesnice:
  int volbaVesnice;
  int penize = 20;
     cout << "\nDorazil jsi do vesnice - misto odpocinku a vylepseni." << endl;
@@ -209,9 +294,39 @@ switch (menu){
             break;
         }
     }
+// Souboj 1
+cout << "\n--- SOUBOJ 1 ---\n";
+soubojJednoho(zivot, maxzivot, mana, maxmana, utok, penize, 5, 2);
+if (zivot <= 0) return 0;
 
+// Souboj 2
+cout << "\n--- SOUBOJ 2 ---\n";
+soubojJednoho(zivot, maxzivot, mana, maxmana, utok, penize, 10, 4);
+if (zivot <= 0) return 0;
 
+// Souboj 3
+cout << "\n--- SOUBOJ 3: DVA NEPRATELE ---\n";
+soubojDvou(zivot, maxzivot, mana, maxmana, utok, penize);
+if (zivot <= 0) return 0;
+
+// Konec souboju
+cout << "\nZvitezil jsi ve vsech soubojich!" << endl;
+cout << "Zivoty: " << zivot << "/" << maxzivot << ", Mana: " << mana << "/" << maxmana << ", Penize: " << penize << endl;
+cout << "ted pujdes do souboje s mini bossem, priprav se" << endl;
+
+// SOUBOJ S MINI BOSSEM
+cout << "\n--- MINI BOSS ---\n";
+soubojJednoho(zivot, maxzivot, mana, maxmana, utok, penize, 13, 6);
+if (zivot <= 0) return 0;
+
+cout << "\nGratuluji! Porazil jsi mini bosse a vracis se zpet do vesnice...\n";
+
+// -------- ZPET DO VESNICE --------
+goto vesnice;
 }
+
+
+
 
 
 
