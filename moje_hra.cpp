@@ -294,6 +294,9 @@ vesnice:
             break;
         }
     }
+
+// SOUBOJE 1.0
+
 // Souboj 1
 cout << "\n--- SOUBOJ 1 ---\n";
 soubojJednoho(zivot, maxzivot, mana, maxmana, utok, penize, 5, 2);
@@ -323,10 +326,35 @@ cout << "\nGratuluji! Porazil jsi mini bosse a vracis se zpet do vesnice...\n";
 
 // -------- ZPET DO VESNICE --------
 goto vesnice;
+
+
+
+// SOUBOJE 2.0
+
+cout << "\n--- SOUBOJ 1: 1 MONSTRUM ---\n";
+soubojJednoho(zivot, maxzivot, mana, maxmana, utok, penize, 6, 3);
+if (zivot <= 0) return 0;
+
+cout << "\n--- SOUBOJ 2: DVE MONSTRA ---\n";
+soubojDvou(zivot, maxzivot, mana, maxmana, utok, penize);
+if (zivot <= 0) return 0;
+
+cout << "\n--- SOUBOJ 3: DVE MONSTRA ---\n";
+soubojDvou(zivot, maxzivot, mana, maxmana, utok, penize);
+if (zivot <= 0) return 0;
+
+cout << "\n--- MINI BOSS ---\n";
+soubojJednoho(zivot, maxzivot, mana, maxmana, utok, penize, 15, 7);
+if (zivot <= 0) return 0;
+
+// Konec souboju
+cout << "\nZvitezil jsi ve vsech soubojich!" << endl;
+cout << "Zivoty: " << zivot << "/" << maxzivot << ", Mana: " << mana << "/" << maxmana << ", Penize: " << penize << endl;
+cout << "\nVracis se zpet do vesnice...\n";
+
+// -------- ZPET DO VESNICE --------
+goto vesnice;
 }
-
-
-
 
 
 
