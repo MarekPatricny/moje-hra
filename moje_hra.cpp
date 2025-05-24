@@ -86,12 +86,72 @@ void soubojDvou(int &zivot, int maxzivot, int &mana, int maxmana, int utok, int 
     cout << "Zvitezil jsi nad obema neprateli!" << endl;
     penize += 25;
 }
+void soubojTri(int &zivot, int maxzivot, int &mana, int maxmana, int utok, int &penize) {
+    int nepritel1 = 5, nepritel2 = 5, nepritel3 = 5;
+    int nepritelUtok = 3;
+
+    while (zivot > 0 && (nepritel1 > 0 || nepritel2 > 0 || nepritel3 > 0)) {
+        int cil, akce;
+        cout << "\nZivoty: " << zivot << "/" << maxzivot << ", Mana: " << mana << "/" << maxmana << endl;
+        cout << "Nepritel 1: " << nepritel1 << " HP, Nepritel 2: " << nepritel2 << " HP, Nepritel 3: " << nepritel3 << " HP\n";
+        cout << "Zvol akci: 1 - Utok, 2 - Leceni (3 many): ";
+        cin >> akce;
+
+        if (akce == 1) {
+            cout << "Na ktereho nepritele zautocis? (1, 2 nebo 3): ";
+            cin >> cil;
+            if (cil == 1 && nepritel1 > 0) {
+                nepritel1 -= utok;
+                cout << "Zasahl jsi nepratele 1 za " << utok << "!" << endl;
+            } else if (cil == 2 && nepritel2 > 0) {
+                nepritel2 -= utok;
+                cout << "Zasahl jsi nepratele 2 za " << utok << "!" << endl;
+            } else if (cil == 3 && nepritel3 > 0) {
+                nepritel3 -= utok;
+                cout << "Zasahl jsi nepratele 3 za " << utok << "!" << endl;
+            } else {
+                cout << "Netrefil ses!" << endl;
+            }
+        } else if (akce == 2 && mana >= 3) {
+            mana -= 3;
+            zivot += 3;
+            if (zivot > maxzivot) zivot = maxzivot;
+            cout << "Vylecil jsi se na " << zivot << "/" << maxzivot << "!" << endl;
+        } else {
+            cout << "Spatna volba nebo malo many!" << endl;
+        }
+
+        // Nepratele utoci
+        if (nepritel1 > 0) {
+            zivot -= nepritelUtok;
+            cout << "Nepritel 1 zautocil za " << nepritelUtok << "!" << endl;
+        }
+        if (nepritel2 > 0) {
+            zivot -= nepritelUtok;
+            cout << "Nepritel 2 zautocil za " << nepritelUtok << "!" << endl;
+        }
+        if (nepritel3 > 0) {
+            zivot -= nepritelUtok;
+            cout << "Nepritel 3 zautocil za " << nepritelUtok << "!" << endl;
+        }
+
+        if (zivot <= 0) {
+            cout << "Byl jsi porazen!" << endl;
+            return;
+        }
+    }
+
+    cout << "Zvitezil jsi nad vsemi tremi neprateli!" << endl;
+    penize += 35;
+}
 //---------------HLAVNI CAST-----------
 int main(){
 //------------POSTAVA----------
 cout << "Vitejte v textove hre!" << endl;
 int clas, menu, rozhodnuti;
 int postavaVybrana = 0;
+int etapaHry = 1;
+int penize = 20;
 
 // Statistiky hrace
     int zivot = 0;
@@ -220,7 +280,6 @@ switch (menu){
 //------------VESNICE--------------
 vesnice:
  int volbaVesnice;
- int penize = 20;
     cout << "\nDorazil jsi do vesnice - misto odpocinku a vylepseni." << endl;
 
     while (true) {
@@ -296,7 +355,7 @@ vesnice:
     }
 
 // SOUBOJE 1.0
-
+if (etapaHry == 1){
 // Souboj 1
 cout << "\n--- SOUBOJ 1 ---\n";
 soubojJednoho(zivot, maxzivot, mana, maxmana, utok, penize, 5, 2);
@@ -323,14 +382,14 @@ soubojJednoho(zivot, maxzivot, mana, maxmana, utok, penize, 13, 6);
 if (zivot <= 0) return 0;
 
 cout << "\nGratuluji! Porazil jsi mini bosse a vracis se zpet do vesnice...\n";
-
+ etapaHry = 2;
 // -------- ZPET DO VESNICE --------
 goto vesnice;
 
 
 
 // SOUBOJE 2.0
-
+}else if (etapaHry == 2){
 cout << "\n--- SOUBOJ 1: 1 MONSTRUM ---\n";
 soubojJednoho(zivot, maxzivot, mana, maxmana, utok, penize, 6, 3);
 if (zivot <= 0) return 0;
@@ -351,9 +410,37 @@ if (zivot <= 0) return 0;
 cout << "\nZvitezil jsi ve vsech soubojich!" << endl;
 cout << "Zivoty: " << zivot << "/" << maxzivot << ", Mana: " << mana << "/" << maxmana << ", Penize: " << penize << endl;
 cout << "\nVracis se zpet do vesnice...\n";
-
+ etapaHry = 3;
 // -------- ZPET DO VESNICE --------
 goto vesnice;
+
+
+
+// SOUBOJE 3.0
+}else if (etapaHry == 3){
+    cout << "\n--- SOUBOJ 1: DVE MONSTRA ---\n";
+    soubojDvou(zivot, maxzivot, mana, maxmana, utok, penize);
+    if (zivot <= 0) return 0;
+
+    cout << "\n--- SOUBOJ 2: DVE MONSTRA ---\n";
+    soubojDvou(zivot, maxzivot, mana, maxmana, utok, penize);
+    if (zivot <= 0) return 0;
+
+    cout << "\n--- SOUBOJ 3: TRI MONSTRA ---\n";
+    soubojTri(zivot, maxzivot, mana, maxmana, utok, penize);
+    if (zivot <= 0) return 0;
+
+    cout << "\n--- MINI BOSS ---\n";
+    soubojJednoho(zivot, maxzivot, mana, maxmana, utok, penize, 18, 8);
+    if (zivot <= 0) return 0;
+// Konec souboju
+    cout << "\nZvitezil jsi ve vsech soubojich!" << endl;
+    cout << "Zivoty: " << zivot << "/" << maxzivot << ", Mana: " << mana << "/" << maxmana << ", Penize: " << penize << endl;
+    cout << "\nVracis se zpet do vesnice...\n";
+    etapaHry = 4;
+// -------- ZPET DO VESNICE --------
+    goto vesnice;
+}
 }
 
 
