@@ -1,5 +1,11 @@
 #include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <cstdlib>
+#include <ctime>
 using namespace std;
+
 // ----------------------- FUNKCE ------------------------
 void soubojJednoho(int &zivot, int maxzivot, int &mana, int maxmana, int utok, int &penize, int nepritelZivot, int nepritelUtok) {
     while (zivot > 0 && nepritelZivot > 0) {
@@ -144,6 +150,109 @@ void soubojTri(int &zivot, int maxzivot, int &mana, int maxmana, int utok, int &
     cout << "Zvitezil jsi nad vsemi tremi neprateli!" << endl;
     penize += 35;
 }
+
+void soubojHexara(int &hracZivot, int maxzivot, int &mana, int maxmana, int utok, int &penize) {
+    srand(time(0));
+
+    int hexaraZivot = 60;
+    int hexaraStandardUtok = 7;
+    int hexaraKritickyUtok = 14;
+    int hexovaSmrst = 15;
+
+    vector<string> vsechnaKouzla = {"fireball", "led", "stin", "vitr", "jed", "lecive"};
+    vector<string> pouzitaKouzla;
+    string posledniKouzlo = "";
+
+    bool hexovaSmrstAktivovana = false;
+    int kolo = 1;
+
+    cout << "\n--- FINALNI BOJ: HEXARA, CARODEJKA CHAOSU ---\n";
+
+    while (hracZivot > 0 && hexaraZivot > 0 && kolo <= 7) {
+        cout << "\nKolo " << kolo << ":\n";
+
+        // Pauza mezi utoky
+        if (kolo % 3 == 0) {
+            cout << "Hexara si potrebuje oddychnout a v tomto kole neutoci.\n";
+        } else if (hexovaSmrstAktivovana) {
+            cout << "HEXOVA SMRST! Hexara rozpoutava chaos a zpusobuje " << hexovaSmrst << " poskozeni!\n";
+            hracZivot -= hexovaSmrst;
+            hexovaSmrstAktivovana = false;
+        } else {
+            int akce = rand() % 100;
+            if (akce < 30) {
+                string kouzlo = vsechnaKouzla[rand() % vsechnaKouzla.size()];
+                bool kriticky = (kouzlo == posledniKouzlo);
+                posledniKouzlo = kouzlo;
+
+                cout << "Hexara pouziva kouzlo: " << kouzlo;
+                if (kriticky) {
+                    cout << " (KRITICKE)";
+                    hracZivot -= hexaraKritickyUtok;
+                } else {
+                    hracZivot -= hexaraStandardUtok;
+                }
+                cout << " a zpusobuje " << (kriticky ? hexaraKritickyUtok : hexaraStandardUtok) << " poskozeni!\n";
+
+                if (find(pouzitaKouzla.begin(), pouzitaKouzla.end(), kouzlo) == pouzitaKouzla.end()) {
+                    pouzitaKouzla.push_back(kouzlo);
+                }
+
+                if (pouzitaKouzla.size() == vsechnaKouzla.size()) {
+                    cout << "Hexara pouzila vsech 6 ruznych kouzel! Pripravuje HEXOVOU SMRST!\n";
+                    hexovaSmrstAktivovana = true;
+                    pouzitaKouzla.clear();
+                }
+
+            } else {
+                // Normalni utok
+                int kritickaSance = rand() % 100;
+                bool kriticky = kritickaSance < 20;
+                int dmg = kriticky ? hexaraKritickyUtok : hexaraStandardUtok;
+                cout << "Hexara utoci svymi dlanemi a zpusobuje " << dmg << " poskozeni!\n";
+                hracZivot -= dmg;
+            }
+        }
+
+        // Kontrola, jestli hrac nezemrel
+        if (hracZivot <= 0) {
+            cout << "Byl jsi porazen Hexarou...\n";
+            return;
+        }
+
+        // Hracuv tah
+        cout << "Mas " << hracZivot << "/" << maxzivot << " zivotu. Mana: " << mana << "/" << maxmana << ".\n";
+        cout << "Zautocis (1) nebo se vylecis (2)? ";
+        int volba;
+        cin >> volba;
+        if (volba == 1) {
+            cout << "Utocis na Hexaru a zpusobujes " << utok << " poskozeni!\n";
+            hexaraZivot -= utok;
+        } else if (volba == 2 && mana >= 5) {
+            int leceni = 10;
+            hracZivot += leceni;
+            if (hracZivot > maxzivot) hracZivot = maxzivot;
+            mana -= 5;
+            cout << "Pouzil jsi lecive kouzlo a obnovil " << leceni << " zivotu!\n";
+        } else {
+            cout << "Neplatna volba nebo nedostatek many.\n";
+        }
+
+        if (hexaraZivot <= 0) {
+            cout << "Porazil jsi Hexaru, carodejku chaosu!\n";
+            penize += 60;
+            cout << "Ziskavas 60 penez. Mas celkem " << penize << " penez.\n";
+            cout << "Zivoty: " << hracZivot << "/" << maxzivot << ", Mana: " << mana << "/" << maxmana << "\n";
+            return;
+        }
+
+        kolo++;
+    }
+
+    if (hexaraZivot > 0) {
+        cout << "\nHexara ustoupila, ale prezila. Boj skoncil neuspesne.\n";
+    }
+}
 //---------------HLAVNI CAST-----------
 int main(){
 //------------POSTAVA----------
@@ -243,7 +352,7 @@ switch (menu){
 
     case 4: // Warlock
     cout << "Vynikajici! Jste Warlock, statistiky: " << endl;
-    maxzivot = 16; zivot = 16;
+    maxzivot = 18; zivot = 18;
     utok = 6;
     maxmana = 6; mana = 6;
     cout << "Zivot - " << zivot << "/" << maxzivot << endl;
@@ -440,8 +549,13 @@ goto vesnice;
     etapaHry = 4;
 // -------- ZPET DO VESNICE --------
     goto vesnice;
+
+
+// FINAL BOSS HEXARA
+}else if (etapaHry == 4){
+    soubojHexara(zivot, maxzivot, mana, maxmana, utok, penize);
+    if (zivot <= 0) return 0;
+
+    cout << "\nHra pro tebe skoncila...\n";
 }
 }
-
-
-
