@@ -7,12 +7,26 @@
 using namespace std;
 
 // ----------------------- FUNKCE ------------------------
-void soubojJednoho(int &zivot, int maxzivot, int &mana, int maxmana, int utok, int &penize, int nepritelZivot, int nepritelUtok) {
+void soubojJednoho(int &zivot, int maxzivot, int &mana, int maxmana, int utok, int &penize, int nepritelZivot, int nepritelUtok, int typPostavy) {
     while (zivot > 0 && nepritelZivot > 0) {
         int akce;
         cout << "\nZivoty: " << zivot << "/" << maxzivot << ", Mana: " << mana << "/" << maxmana << endl;
         cout << "Nepritel ma " << nepritelZivot << " zivotu.\n";
-        cout << "Zvol akci: 1 - Utok, 2 - Leceni (stoji 3 many, +3 zivoty): ";
+        cout << "Zvol akci:\n";
+        cout << "1 - Bezny utok\n";
+        cout << "2 - Leceni (3 many, +3 zivoty)\n";
+
+
+        if (typPostavy == 1) { // Paladin
+            cout << "3 - Svetelna salva (2 utok vsem, 5 many)\n";
+        } else if (typPostavy == 2) { // Mag
+            cout << "3 - Ohniva koule (5 utok, 6 many)\n";
+        } else if (typPostavy == 3) { // Lovec
+            cout << "3 - Lovci instinkt (+2 utok na 2 kola, 3 many)\n";
+        } else if (typPostavy == 4) { // Warlock
+            cout << "3 - Kradez zivota (+2 zivoty, 3 many)\n";
+        }
+
         cin >> akce;
 
         if (akce == 1) {
@@ -23,8 +37,30 @@ void soubojJednoho(int &zivot, int maxzivot, int &mana, int maxmana, int utok, i
             zivot += 3;
             if (zivot > maxzivot) zivot = maxzivot;
             cout << "Vylecil jsi se na " << zivot << "/" << maxzivot << "!" << endl;
+        } else if (akce == 3) {
+            if (typPostavy == 1 && mana >= 5) { // Paladin - Salva
+                mana -= 5;
+                nepritelZivot -= 2;
+                cout << "Pouzil jsi svetelnou salvu! Nepritel ztratil 2 HP.\n";
+            } else if (typPostavy == 2 && mana >= 6) { // Mag - Ohniva koule
+                mana -= 6;
+                nepritelZivot -= 5;
+                cout << "Seslal jsi ohnivou kouli! Nepritel ztratil 5 HP.\n";
+            } else if (typPostavy == 3 && mana >= 3) { // Lovec - Instinkt
+                mana -= 3;
+                cout << "Aktivujes lovci instinkt! Zvysujes utok o 2 na 2 kola.\n";
+                utok += 2;
+
+            } else if (typPostavy == 4 && mana >= 3) { // Warlock - Kradez zivota
+                mana -= 3;
+                zivot += 2;
+                if (zivot > maxzivot) zivot = maxzivot;
+                cout << "Pouzil jsi kradez zivota. Pridal sis 2 zivoty.\n";
+            } else {
+                cout << "Nemas dost many nebo spatna akce!\n";
+            }
         } else {
-            cout << "Spatna volba nebo malo many!" << endl;
+            cout << "Neplatna volba nebo malo many.\n";
         }
 
         if (nepritelZivot > 0) {
@@ -42,7 +78,7 @@ void soubojJednoho(int &zivot, int maxzivot, int &mana, int maxmana, int utok, i
     penize += 10;
 }
 
-void soubojDvou(int &zivot, int maxzivot, int &mana, int maxmana, int utok, int &penize) {
+void soubojDvou(int &zivot, int maxzivot, int &mana, int maxmana, int utok, int typPostavy, int &penize) {
     int nepritel1 = 6, nepritel2 = 6, nepritelUtok = 3;
 
     while (zivot > 0 && (nepritel1 > 0 || nepritel2 > 0)) {
@@ -50,6 +86,30 @@ void soubojDvou(int &zivot, int maxzivot, int &mana, int maxmana, int utok, int 
         cout << "\nZivoty: " << zivot << "/" << maxzivot << ", Mana: " << mana << "/" << maxmana << endl;
         cout << "Nepritel 1: " << nepritel1 << " HP, Nepritel 2: " << nepritel2 << " HP\n";
         cout << "Zvol akci: 1 - Utok, 2 - Leceni (3 many): ";
+
+        if (typPostavy == 1) {
+            cout << "3 - Svetelna salva (2 utok vsem, 5 many)";
+        } else if (typPostavy == 2) {
+            cout << "3 - Ohniva koule (5 utok, 6 many)";
+        } else if (typPostavy == 3) {
+            cout << "3 - Lovci instinkt (+2 utok na 2 kola, 3 many)";
+        } else if (typPostavy == 4) {
+            cout << "3 - Kradez zivota (+2 zivoty, 3 many)";
+        }
+
+
+        if (typPostavy == 1) {
+            cout << "3 - Svetelna salva (2 utok vsem, 5 many)";
+        } else if (typPostavy == 2) {
+            cout << "3 - Ohniva koule (5 utok, 6 many)";
+        } else if (typPostavy == 3) {
+            cout << "3 - Lovci instinkt (+2 utok na 2 kola, 3 many)";
+        } else if (typPostavy == 4) {
+            cout << "3 - Kradez zivota (+2 zivoty, 3 many)";
+        }
+
+
+
         cin >> akce;
 
         if (akce == 1) {
@@ -73,6 +133,52 @@ void soubojDvou(int &zivot, int maxzivot, int &mana, int maxmana, int utok, int 
             cout << "Spatna volba nebo malo many!" << endl;
         }
 
+         if (typPostavy == 1) { // Paladin
+            cout << "3 - Svetelna salva (2 utok vsem, 5 many)\n";
+        } else if (typPostavy == 2) { // Mag
+            cout << "3 - Ohniva koule (5 utok, 6 many)\n";
+        } else if (typPostavy == 3) { // Lovec
+            cout << "3 - Lovci instinkt (+2 utok na 2 kola, 3 many)\n";
+        } else if (typPostavy == 4) { // Warlock
+            cout << "3 - Kradez zivota (+2 zivoty, 3 many)\n";
+        }
+
+        cin >> akce;
+
+        if (akce == 1) {
+            cout << "Zautocil jsi za " << utok << " utoku!" << endl;
+            nepritel1, nepritel2 -= utok;
+        } else if (akce == 2 && mana >= 3) {
+            mana -= 3;
+            zivot += 3;
+            if (zivot > maxzivot) zivot = maxzivot;
+            cout << "Vylecil jsi se na " << zivot << "/" << maxzivot << "!" << endl;
+        } else if (akce == 3) {
+            if (typPostavy == 1 && mana >= 5) { // Paladin - Salva
+                mana -= 5;
+                nepritel1, nepritel2 -= 2;
+                cout << "Pouzil jsi svetelnou salvu! Nepritel ztratil 2 HP.\n";
+            } else if (typPostavy == 2 && mana >= 6) { // Mag - Ohniva koule
+                mana -= 6;
+                nepritel1, nepritel2 -= 5;
+                cout << "Seslal jsi ohnivou kouli! Nepritel ztratil 5 HP.\n";
+            } else if (typPostavy == 3 && mana >= 3) { // Lovec - Instinkt
+                mana -= 3;
+                cout << "Aktivujes lovci instinkt! Zvysujes utok o 2 na 2 kola.\n";
+                utok += 2;
+
+            } else if (typPostavy == 4 && mana >= 3) { // Warlock - Kradez zivota
+                mana -= 3;
+                zivot += 2;
+                if (zivot > maxzivot) zivot = maxzivot;
+                cout << "Pouzil jsi kradez zivota. Pridal sis 2 zivoty.\n";
+            } else {
+                cout << "Nemas dost many nebo spatna akce!\n";
+            }
+        } else {
+            cout << "Neplatna volba nebo malo many.\n";
+        }
+
         // Nepratele utoci
         if (nepritel1 > 0) {
             zivot -= nepritelUtok;
@@ -92,7 +198,7 @@ void soubojDvou(int &zivot, int maxzivot, int &mana, int maxmana, int utok, int 
     cout << "Zvitezil jsi nad obema neprateli!" << endl;
     penize += 25;
 }
-void soubojTri(int &zivot, int maxzivot, int &mana, int maxmana, int utok, int &penize) {
+void soubojTri(int &zivot, int maxzivot, int &mana, int maxmana, int utok, int &penize, int typPostavy) {
     int nepritel1 = 5, nepritel2 = 5, nepritel3 = 5;
     int nepritelUtok = 3;
 
@@ -101,6 +207,28 @@ void soubojTri(int &zivot, int maxzivot, int &mana, int maxmana, int utok, int &
         cout << "\nZivoty: " << zivot << "/" << maxzivot << ", Mana: " << mana << "/" << maxmana << endl;
         cout << "Nepritel 1: " << nepritel1 << " HP, Nepritel 2: " << nepritel2 << " HP, Nepritel 3: " << nepritel3 << " HP\n";
         cout << "Zvol akci: 1 - Utok, 2 - Leceni (3 many): ";
+
+        if (typPostavy == 1) {
+            cout << "3 - Svetelna salva (2 utok vsem, 5 many)";
+        } else if (typPostavy == 2) {
+            cout << "3 - Ohniva koule (5 utok, 6 many)";
+        } else if (typPostavy == 3) {
+            cout << "3 - Lovci instinkt (+2 utok na 2 kola, 3 many)";
+        } else if (typPostavy == 4) {
+            cout << "3 - Kradez zivota (+2 zivoty, 3 many)";
+        }
+
+
+        if (typPostavy == 1) {
+            cout << "3 - Svetelna salva (2 utok vsem, 5 many)";
+        } else if (typPostavy == 2) {
+            cout << "3 - Ohniva koule (5 utok, 6 many)";
+        } else if (typPostavy == 3) {
+            cout << "3 - Lovci instinkt (+2 utok na 2 kola, 3 many)";
+        } else if (typPostavy == 4) {
+            cout << "3 - Kradez zivota (+2 zivoty, 3 many)";
+        }
+
         cin >> akce;
 
         if (akce == 1) {
@@ -253,6 +381,147 @@ void soubojHexara(int &hracZivot, int maxzivot, int &mana, int maxmana, int utok
         cout << "\nHexara ustoupila, ale prezila. Boj skoncil neuspesne.\n";
     }
 }
+//------------SCHOPNOSTI---------------
+class Postava {
+public:
+    string jmeno;
+    int zivoty;
+    int maxZivoty;
+    int sila;
+    int mana;
+    int maxMana;
+    int lektvary;
+
+    Postava(string jmeno, int zivoty, int sila, int mana, int lektvary)
+        : jmeno(jmeno), zivoty(zivoty), maxZivoty(zivoty), sila(sila), mana(mana), maxMana(mana), lektvary(lektvary) {}
+
+    void zobrazStaty() {
+        cout << "======================" << endl;
+        cout << "Postava: " << jmeno << endl;
+        cout << "Zivoty: " << zivoty << "/" << maxZivoty << endl;
+        cout << "Mana: " << mana << "/" << maxMana << endl;
+        cout << "Sila: " << sila << endl;
+        cout << "Lektvary: " << lektvary << endl;
+        cout << "======================" << endl;
+    }
+
+    void pouzijLektvar() {
+        if (lektvary > 0) {
+            int leceni = 30;
+            zivoty += leceni;
+            if (zivoty > maxZivoty) zivoty = maxZivoty;
+            lektvary--;
+            cout << "Pouzil jsi lektvar a obnovil " << leceni << " zivotu." << endl;
+        } else {
+            cout << "Nemas zadne lektvary!" << endl;
+        }
+    }
+
+    int pouzijSchopnost() {
+        if (jmeno == "Paladin") {
+            if (mana >= 20) {
+                mana -= 20;
+                int dmg = sila * 2;
+                cout << "Pouzil jsi Bozsky uder za " << dmg << " zraneni." << endl;
+                return dmg;
+            } else {
+                cout << "Nemas dostatek many!" << endl;
+                return 0;
+            }
+        } else if (jmeno == "Mag") {
+            if (mana >= 30) {
+                mana -= 30;
+                int dmg = sila * 3;
+                cout << "Seslal jsi Ohnivou kouli za " << dmg << " zraneni." << endl;
+                return dmg;
+            } else {
+                cout << "Nemas dostatek many!" << endl;
+                return 0;
+            }
+        } else if (jmeno == "Lovec") {
+            if (mana >= 15) {
+                mana -= 15;
+                int bonus = rand() % 10 + 5;
+                int dmg = sila + bonus;
+                cout << "Vystrelil jsi Sipovou salvu za " << dmg << " zraneni." << endl;
+                return dmg;
+            } else {
+                cout << "Nemas dostatek many!" << endl;
+                return 0;
+            }
+        } else if (jmeno == "Warlock") {
+            if (mana >= 25) {
+                mana -= 25;
+                int dmg = sila + 10;
+                cout << "Seslal jsi Kletbu bolesti za " << dmg << " zraneni." << endl;
+                return dmg;
+            } else {
+                cout << "Nemas dostatek many!" << endl;
+                return 0;
+            }
+        } else {
+            cout << "Tato postava nema zadnou schopnost." << endl;
+            return 0;
+        }
+    }
+};
+
+class Nepritel {
+public:
+    string jmeno;
+    int zivoty;
+    int sila;
+
+    Nepritel(string jmeno, int zivoty, int sila) : jmeno(jmeno), zivoty(zivoty), sila(sila) {}
+
+    void zobrazStaty() {
+        cout << "===== Nepritel =====" << endl;
+        cout << "Nepritel: " << jmeno << endl;
+        cout << "Zivoty: " << zivoty << endl;
+        cout << "Sila: " << sila << endl;
+        cout << "====================" << endl;
+    }
+};
+
+void boj(Postava& hrac, Nepritel& nepritel) {
+    while (hrac.zivoty > 0 && nepritel.zivoty > 0) {
+        hrac.zobrazStaty();
+        nepritel.zobrazStaty();
+
+        cout << "\nVyber akci: 1 = Utok, 2 = Schopnost, 3 = Lektvar: ";
+        int volba;
+        cin >> volba;
+
+        if (volba == 1) {
+            nepritel.zivoty -= hrac.sila;
+            cout << "Utocis a zpusobis " << hrac.sila << " zraneni." << endl;
+        } else if (volba == 2) {
+            int dmg = hrac.pouzijSchopnost();
+            if (dmg > 0) {
+                nepritel.zivoty -= dmg;
+            }
+        } else if (volba == 3) {
+            hrac.pouzijLektvar();
+        } else {
+            cout << "Neplatna volba." << endl;
+            continue;
+        }
+
+        if (nepritel.zivoty > 0) {
+            hrac.zivoty -= nepritel.sila;
+            cout << "Nepritel utoci a zpusobi ti " << nepritel.sila << " zraneni." << endl;
+        } else {
+            cout << "Porazil jsi nepritele!" << endl;
+            break;
+        }
+
+        if (hrac.zivoty <= 0) {
+            cout << "Byl jsi porazen!" << endl;
+            break;
+        }
+    }
+}
+
 //---------------HLAVNI CAST-----------
 int main(){
 //------------POSTAVA----------
@@ -261,6 +530,9 @@ int clas, menu, rozhodnuti;
 int postavaVybrana = 0;
 int etapaHry = 1;
 int penize = 20;
+int typPostavy = 0;
+
+
 
 // Statistiky hrace
     int zivot = 0;
@@ -282,7 +554,8 @@ switch (menu){
     cout << "Vyborne! Jste Paladin, statistiky: " << endl;
     maxzivot = 14; zivot = 14;
     utok = 4;
-    maxmana = 10; mana = 10;
+    maxmana = 30; mana = 30;
+    typPostavy = 1;
     cout << "Zivot - " << zivot << "/" << maxzivot << endl;
     cout << "Utok - " << utok << endl;
     cout << "Mana  - " << mana << "/" << maxmana << endl;
@@ -306,7 +579,8 @@ switch (menu){
     cout << "Skvele! Jste Mag, statistiky: " << endl;
     maxzivot = 10; zivot = 10;
     utok = 3;
-    maxmana = 14; mana = 14;
+    maxmana = 35; mana = 35;
+    typPostavy = 2;
     cout << "Zivot - " << zivot << "/" << maxzivot << endl;
     cout << "Utok - " << utok << endl;
     cout << "Mana  - " << mana << "/" << maxmana << endl;
@@ -330,7 +604,8 @@ switch (menu){
     cout << "Vytecne! Jste Lovec, statistiky: " << endl;
     maxzivot = 12; zivot = 12;
     utok = 5;
-    maxmana = 8; mana = 8;
+    maxmana = 20; mana = 20;
+    typPostavy = 3;
     cout << "Zivot - " << zivot << "/" << maxzivot << endl;
     cout << "Utok - " << utok << endl;
     cout << "Mana  - " << mana << "/" << maxmana << endl;
@@ -354,7 +629,8 @@ switch (menu){
     cout << "Vynikajici! Jste Warlock, statistiky: " << endl;
     maxzivot = 18; zivot = 18;
     utok = 6;
-    maxmana = 6; mana = 6;
+    maxmana = 18; mana = 18;
+    typPostavy = 4;
     cout << "Zivot - " << zivot << "/" << maxzivot << endl;
     cout << "Utok - " << utok << endl;
     cout << "Mana  - " << mana << "/" << maxmana << endl;
@@ -467,17 +743,17 @@ vesnice:
 if (etapaHry == 1){
 // Souboj 1
 cout << "\n--- SOUBOJ 1 ---\n";
-soubojJednoho(zivot, maxzivot, mana, maxmana, utok, penize, 5, 2);
+soubojJednoho(zivot, maxzivot, mana, maxmana, utok, penize, typPostavy, 5, 2);
 if (zivot <= 0) return 0;
 
 // Souboj 2
 cout << "\n--- SOUBOJ 2 ---\n";
-soubojJednoho(zivot, maxzivot, mana, maxmana, utok, penize, 10, 4);
+soubojJednoho(zivot, maxzivot, mana, maxmana, utok, penize, typPostavy, 10, 4);
 if (zivot <= 0) return 0;
 
 // Souboj 3
 cout << "\n--- SOUBOJ 3: DVA NEPRATELE ---\n";
-soubojDvou(zivot, maxzivot, mana, maxmana, utok, penize);
+soubojDvou(zivot, maxzivot, mana, maxmana, utok, penize, typPostavy);
 if (zivot <= 0) return 0;
 
 // Konec souboju
@@ -487,7 +763,7 @@ cout << "ted pujdes do souboje s mini bossem, priprav se" << endl;
 
 // SOUBOJ S MINI BOSSEM
 cout << "\n--- MINI BOSS ---\n";
-soubojJednoho(zivot, maxzivot, mana, maxmana, utok, penize, 13, 6);
+soubojJednoho(zivot, maxzivot, mana, maxmana, utok, penize, typPostavy, 13, 6);
 if (zivot <= 0) return 0;
 
 cout << "\nGratuluji! Porazil jsi mini bosse a vracis se zpet do vesnice...\n";
@@ -500,19 +776,19 @@ goto vesnice;
 // SOUBOJE 2.0
 }else if (etapaHry == 2){
 cout << "\n--- SOUBOJ 1: 1 MONSTRUM ---\n";
-soubojJednoho(zivot, maxzivot, mana, maxmana, utok, penize, 6, 3);
+soubojJednoho(zivot, maxzivot, mana, maxmana, utok, penize, typPostavy, 6, 3);
 if (zivot <= 0) return 0;
 
 cout << "\n--- SOUBOJ 2: DVE MONSTRA ---\n";
-soubojDvou(zivot, maxzivot, mana, maxmana, utok, penize);
+soubojDvou(zivot, maxzivot, mana, maxmana, utok, penize, typPostavy);
 if (zivot <= 0) return 0;
 
 cout << "\n--- SOUBOJ 3: DVE MONSTRA ---\n";
-soubojDvou(zivot, maxzivot, mana, maxmana, utok, penize);
+soubojDvou(zivot, maxzivot, mana, maxmana, utok, penize, typPostavy);
 if (zivot <= 0) return 0;
 
 cout << "\n--- MINI BOSS ---\n";
-soubojJednoho(zivot, maxzivot, mana, maxmana, utok, penize, 15, 7);
+soubojJednoho(zivot, maxzivot, mana, maxmana, utok, penize, typPostavy, 15, 7);
 if (zivot <= 0) return 0;
 
 // Konec souboju
@@ -528,19 +804,19 @@ goto vesnice;
 // SOUBOJE 3.0
 }else if (etapaHry == 3){
     cout << "\n--- SOUBOJ 1: DVE MONSTRA ---\n";
-    soubojDvou(zivot, maxzivot, mana, maxmana, utok, penize);
+    soubojDvou(zivot, maxzivot, mana, maxmana, utok, penize, typPostavy);
     if (zivot <= 0) return 0;
 
     cout << "\n--- SOUBOJ 2: DVE MONSTRA ---\n";
-    soubojDvou(zivot, maxzivot, mana, maxmana, utok, penize);
+    soubojDvou(zivot, maxzivot, mana, maxmana, utok, penize, typPostavy);
     if (zivot <= 0) return 0;
 
     cout << "\n--- SOUBOJ 3: TRI MONSTRA ---\n";
-    soubojTri(zivot, maxzivot, mana, maxmana, utok, penize);
+    soubojTri(zivot, maxzivot, mana, maxmana, utok, penize, typPostavy);
     if (zivot <= 0) return 0;
 
     cout << "\n--- MINI BOSS ---\n";
-    soubojJednoho(zivot, maxzivot, mana, maxmana, utok, penize, 18, 8);
+    soubojJednoho(zivot, maxzivot, mana, maxmana, utok, penize, typPostavy, 18, 8);
     if (zivot <= 0) return 0;
 // Konec souboju
     cout << "\nZvitezil jsi ve vsech soubojich!" << endl;
